@@ -132,3 +132,143 @@
     @apply font-sans;
   }
 }
+/*
+ * Topographic contour background from public/textures/topo.svg.
+ * The SVG has white lines: shown as-is in dark mode, inverted to dark lines
+ * in light mode. Edges fade out radially.
+ * Use on an absolutely positioned, aria-hidden layer; tune with opacity-*.
+ */
+@utility bg-topo {
+  background-image: url("/textures/topo.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  mask-image: radial-gradient(ellipse at center, black 25%, transparent 72%);
+  filter: invert(1);
+
+  &:is(.dark *) {
+    filter: none;
+  }
+}
+
+/*
+ * Survey frame: small amber corner marks just outside the element, like crop
+ * marks on a map. Draws on ::before, so don't clip the element itself
+ * (put overflow-hidden on an inner wrapper instead).
+ * Tune with --survey-color, --survey-size (arm length), --survey-offset.
+ */
+@utility survey-frame {
+  position: relative;
+  --survey-color: var(--color-amber-500);
+  --survey-size: 20px;
+  --survey-offset: 14px;
+  --survey-thickness: 2px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--survey-offset) * -1);
+    pointer-events: none;
+    --h: linear-gradient(var(--survey-color), var(--survey-color));
+    background:
+      var(--h) top left / var(--survey-size) var(--survey-thickness),
+      var(--h) top left / var(--survey-thickness) var(--survey-size),
+      var(--h) top right / var(--survey-size) var(--survey-thickness),
+      var(--h) top right / var(--survey-thickness) var(--survey-size),
+      var(--h) bottom left / var(--survey-size) var(--survey-thickness),
+      var(--h) bottom left / var(--survey-thickness) var(--survey-size),
+      var(--h) bottom right / var(--survey-size) var(--survey-thickness),
+      var(--h) bottom right / var(--survey-thickness) var(--survey-size);
+    background-repeat: no-repeat;
+  }
+}
+
+/*
+ * Scroll tilt: starts tilted back and settles flat over the first 500px of
+ * page scroll, using a scroll-driven animation. Stays flat for users who
+ * prefer reduced motion and in browsers without scroll-driven animations.
+ * Needs at least ~500px of scrollable page below to fully settle.
+ */
+@keyframes scroll-tilt-settle {
+  from {
+    transform: perspective(1000px) rotateX(32deg) scale(0.9) translateY(-24px);
+  }
+  to {
+    transform: perspective(1000px) rotateX(0deg) scale(1) translateY(0);
+  }
+}
+
+@utility scroll-tilt {
+  transform-origin: center center;
+  will-change: transform;
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: scroll-tilt-settle linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0px 500px;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion. Everything below only runs when the user hasn't asked for reduced
+ * motion; otherwise content simply appears in place.
+ * ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--fade-distance, 16px));
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/*
+ * Fade up on page load. Stagger with a delay variable:
+ *   <h1 class="fade-up [--fade-delay:120ms]">
+ */
+@utility fade-up {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: fade-up 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--fade-delay, 0ms);
+  }
+}
+
+/*
+ * Reveal on scroll: fades and lifts in as the element enters the viewport,
+ * driven by the scroll position (no JavaScript). Stagger siblings with
+ * --reveal-offset (e.g. [--reveal-offset:10%]). Browsers without
+ * scroll-driven animations just show the content.
+ */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry calc(0% + var(--reveal-offset, 0%)) cover calc(25% + var(--reveal-offset, 0%));
+    }
+  }
+}

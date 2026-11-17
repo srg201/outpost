@@ -1,68 +1,65 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   ClerkLoaded,
   ClerkLoading,
   Show,
   SignInButton,
   SignUpButton,
-  useAuth,
   UserButton,
 } from "@clerk/nextjs";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Menu01Icon } from "@hugeicons/core-free-icons";
+
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 import { ModeToggle } from "../mode-toggle";
-import { usePathname } from "next/navigation";
+import { Logo } from "./logo";
+
+const NAV_LINKS = [
+  { href: "/#product", label: "Product" },
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#pricing", label: "Pricing" },
+];
+
 
 const SiteHeader = () => {
-    const pathname = usePathname()
-  const { isSignedIn } = useAuth();
+  const pathname = usePathname();
   const isLandingPage = pathname === "/";
-  return (
-    <header className="fixed inset-x-0 top-0 z-20 grid h-18 grid-cols-[1fr_auto_1fr] items-center border-b border-border/60 bg-background/70 px-6 backdrop-blur-md md:px-10">
-      <Link className="flex items-center justify-self-start" href={"/"}>
-        {/* Both logos render; CSS picks one, so there's no flash on load */}
-        <Image
-          src={"/brand/logo-navbar-light.png"}
-          alt="Outpost"
-          width={314}
-          height={160}
-          className="h-9 w-auto dark:hidden"
-          priority
-        />
-        <Image
-          src={"/brand/logo-navbar-dark.png"}
-          alt="Outpost"
-          width={314}
-          height={160}
-          className="hidden h-9 w-auto dark:block"
-          priority
-        />
-      </Link>
+  // Each link in the mobile menu closes it on click.
+  const [menuOpen, setMenuOpen] = useState(false);
 
+  return (
+    <header className="fixed inset-x-0 top-0 z-20 flex h-18 items-center justify-between border-b border-border/60 bg-background/70 px-4 backdrop-blur-md sm:px-6 md:grid md:grid-cols-[1fr_auto_1fr] md:px-10">
+      <Logo className="justify-self-start" priority />
+
+      {/* Desktop nav */}
       {isLandingPage && (
-        <nav className="flex gap-4 items-center">
-          <Button
-            nativeButton={false}
-            variant={"link"}
-            render={<Link href={"/product"}>Product</Link>}
-          />
-          <Button
-            nativeButton={false}
-            variant={"link"}
-            render={<Link href={"/how-it-works"}>How it works</Link>}
-          />
-          <Button
-            nativeButton={false}
-            variant={"link"}
-            render={<Link href={"/Pricing"}>Pricing</Link>}
-          />
+        <nav aria-label="Main" className="hidden items-center gap-1 md:flex lg:gap-4">
+          {NAV_LINKS.map((link) => (
+            <Button
+              key={link.href}
+              nativeButton={false}
+              variant="link"
+              render={<Link href={link.href}>{link.label}</Link>}
+            />
+          ))}
         </nav>
       )}
 
-      {/* Fixed-height right column: keeps the nav centered while Clerk loads */}
-      <div className="col-start-3 flex h-9 items-center justify-end gap-2">
+      {/* Desktop actions. Fixed height keeps the nav centered while Clerk loads */}
+      <div className="col-start-3 hidden h-9 items-center justify-end gap-2 md:flex">
         <ModeToggle />
         <ClerkLoading>
           <Skeleton className="h-8 w-36" />
@@ -71,18 +68,100 @@ const SiteHeader = () => {
           <Suspense>
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <Button variant={"ghost"}>Sign in</Button>
+                <Button variant="ghost">Sign in</Button>
               </SignInButton>
               <SignUpButton mode="modal">
                 <Button>Sign up</Button>
               </SignUpButton>
             </Show>
             <Show when="signed-in">
-              <Button nativeButton={false} render={<Link href={'/dashboard'}></Link>} >Dashboard</Button>
+              <Button nativeButton={false} render={<Link href="/dashboard" />}>
+                Dashboard
+              </Button>
               <UserButton />
             </Show>
           </Suspense>
         </ClerkLoaded>
+      </div>
+
+      {/* Mobile actions */}
+      <div className="flex h-9 items-center gap-1 md:hidden">
+        <ModeToggle />
+        <ClerkLoaded>
+          <Suspense>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
+          </Suspense>
+        </ClerkLoaded>
+
+        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+          <SheetTrigger
+            render={
+              <Button variant="ghost" size="icon" aria-label="Open menu">
+                <HugeiconsIcon icon={Menu01Icon} className="size-5" />
+              </Button>
+            }
+          />
+          <SheetContent side="right" className="w-full max-w-xs gap-0">
+            <SheetHeader className="border-b border-border/60">
+              <SheetTitle className="sr-only">Menu</SheetTitle>
+              <Logo className="w-fit" />
+            </SheetHeader>
+
+            <nav aria-label="Mobile" className="flex flex-col p-2">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            <SheetFooter className="mt-auto border-t border-border/60">
+              <ClerkLoading>
+                <Skeleton className="h-10 w-full" />
+              </ClerkLoading>
+              <ClerkLoaded>
+                <Suspense>
+                  <Show when="signed-out">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      nativeButton={false}
+                      render={<Link href="/sign-in" />}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Sign in
+                    </Button>
+                    <Button
+                      size="lg"
+                      nativeButton={false}
+                      render={<Link href="/sign-up" />}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Sign up
+                    </Button>
+                  </Show>
+                  <Show when="signed-in">
+                    <Button
+                      size="lg"
+                      nativeButton={false}
+                      render={<Link href="/dashboard" />}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Button>
+                  </Show>
+                </Suspense>
+              </ClerkLoaded>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
     </header>
   );
