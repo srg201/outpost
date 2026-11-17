@@ -1,10 +1,14 @@
+import { ClerkProvider } from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono, Outfit, Oxanium, Inter, Raleway } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toast";
 import AppShell from "@/components/web/app-shell";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const ralewayHeading = Raleway({subsets:['latin'],variable:'--font-heading'});
 
@@ -29,9 +33,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         "h-full",
-        "antialiased dark",
+        "antialiased",
         geistSans.variable,
         geistMono.variable,
         "font-sans",
@@ -40,10 +45,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>
-          <AppShell>{children}</AppShell>
-        </TooltipProvider>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ClerkProvider appearance={{ theme: shadcn }}>
+            <TooltipProvider>
+              <Suspense>
+                <AppShell>{children}</AppShell>
+              </Suspense>
+            </TooltipProvider>
+            <Toaster />
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
