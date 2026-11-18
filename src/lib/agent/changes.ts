@@ -11,8 +11,11 @@ export type AppliedChange = {
   detail?: string;
   /** Undoes exactly this change, leaving everything made since in place. */
   revert: () => void;
-  /** Shows the change: selects and zooms to shapes, or puts the cursor in the block. */
-  focus?: () => void;
+  /**
+   * Shows the change: selects and zooms to shapes, or puts the cursor in the block. `cover` is an
+   * element laid over the editors (the agent panel) that the shapes are kept clear of.
+   */
+  focus?: (cover?: Element | null) => void;
 };
 
 export type ChangeStatus = "pending" | "accepted" | "rejected";

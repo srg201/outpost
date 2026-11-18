@@ -73,13 +73,43 @@ export function runCanvasTool(editor: Editor, ids: ShapeIdMap, name: CanvasToolN
   return {
     detail,
     revert: () => revertDiff(editor, diff),
-    focus: () => {
+    focus: (cover) => {
       const existing = touched.filter((id) => editor.getShape(id));
       if (!existing.length) return;
       editor.select(...existing);
-      editor.zoomToSelection({ animation: { duration: 300 } });
+      zoomToSelectionBeside(editor, cover);
     },
   };
+}
+
+const FOCUS_INSET = 64;
+// Narrower than this, what's left beside the cover is too small to show anything, so use it all.
+const MIN_VISIBLE_WIDTH = 240;
+
+/**
+ * Like editor.zoomToSelection, but fits the selection into the part of the canvas not hidden under
+ * `cover` (the agent panel, laid over the right side), so "Show" doesn't zoom to behind the chat.
+ */
+function zoomToSelectionBeside(editor: Editor, cover?: Element | null) {
+  const bounds = editor.getSelectionPageBounds();
+  if (!bounds) return;
+
+  const { width, height } = editor.getViewportScreenBounds();
+  const container = editor.getContainer().getBoundingClientRect();
+  const coverLeft = cover?.getBoundingClientRect().left ?? container.right;
+  const hidden = Math.max(0, container.right - Math.max(coverLeft, container.left));
+  const visibleWidth = width - hidden >= MIN_VISIBLE_WIDTH ? width - hidden : width;
+
+  // Never zoom past 100%, so a single small shape isn't blown up to fill the screen.
+  const zoom = Math.min(1, (visibleWidth - FOCUS_INSET) / bounds.w, (height - FOCUS_INSET) / bounds.h);
+  editor.setCamera(
+    {
+      x: -bounds.x + (visibleWidth - bounds.w * zoom) / 2 / zoom,
+      y: -bounds.y + (height - bounds.h * zoom) / 2 / zoom,
+      z: zoom,
+    },
+    { animation: { duration: 300 } },
+  );
 }
 
 // Undo one captured change against the canvas as it is now: remove what it added, restore what it

@@ -307,7 +307,7 @@ function ChangeActions({ change }: { change: AgentChange }) {
   return (
     <span className="flex shrink-0 items-center gap-0.5">
       {change.focus && live && (
-        <Button variant="ghost" size="icon-xs" aria-label={t.show} title={t.show} onClick={change.focus}>
+        <Button variant="ghost" size="icon-xs" aria-label={t.show} title={t.show} onClick={() => change.focus?.(document.getElementById("agent-panel"))}>
           <HugeiconsIcon icon={ViewIcon} aria-hidden />
         </Button>
       )}
