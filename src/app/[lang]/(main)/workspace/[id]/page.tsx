@@ -8,6 +8,9 @@ import type { Block } from "@blocknote/core";
 import type { TLEditorSnapshot } from "tldraw";
 import { PenTool03Icon } from "@hugeicons/core-free-icons";
 
+import { AgentButton } from "@/components/agent/agent-button";
+import { AgentPanel } from "@/components/agent/agent-panel";
+import { AgentProvider } from "@/components/agent/agent-provider";
 import { CanvasEditor } from "@/components/canvas/canvas-editor-loader";
 import { CommandPalette } from "@/components/command-palette";
 import { DocEditor } from "@/components/doc/doc-editor-loader";
@@ -22,7 +25,7 @@ import { PendingSurface } from "./_components/pending-surface";
 import { ViewSwitcher } from "./_components/view-switcher";
 import { WorkspacePanels } from "./_components/workspace-panels";
 import { getWorkspace } from "./_lib/get-workspace";
-import { parseViewMode } from "./_lib/view-mode";
+import { parseViewMode, viewHref } from "./_lib/view-mode";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/workspace/[id]">): Promise<Metadata> {
   // Reads the session, so the title streams in with the page (the page is dynamic anyway).
@@ -43,17 +46,24 @@ export default function WorkspacePage(props: Props) {
 }
 
 async function Workspace({ params, searchParams }: Props) {
-  const [{ id }, { view: viewParam }, dict] = await Promise.all([params, searchParams, getDictionary()]);
+  const [{ id }, { view: viewParam, prompt }, dict] = await Promise.all([params, searchParams, getDictionary()]);
   const workspace = await getWorkspace(id);
   if (!workspace) notFound();
 
   const t = dict.workspacePage;
   const view = parseViewMode(viewParam);
   const { doc, canvas } = workspace;
+  const canvasReady = isCanvasSyncConfigured();
 
   return (
     // Lets header tools (agent, share) reach the live editors inside the panels.
     <WorkspaceEditorsProvider>
+    <AgentProvider
+      workspaceId={id}
+      initialPrompt={typeof prompt === "string" ? prompt : undefined}
+      needs={{ doc: view !== "canvas", canvas: view !== "doc" && canvasReady }}
+      cleanUrl={viewHref(id, view)}
+    >
     <div className="flex h-dvh flex-col overflow-hidden">
       {/* Name on the left, view switcher in the middle, account and tools on the right.
           On phones the switcher drops to a second row so the name keeps its room. */}
@@ -76,6 +86,7 @@ async function Workspace({ params, searchParams }: Props) {
         </div>
 
         <div className="flex items-center justify-end gap-2 sm:col-start-3">
+          <AgentButton />
           <div className="hidden lg:block">
             <CommandPalette />
           </div>
@@ -87,7 +98,7 @@ async function Workspace({ params, searchParams }: Props) {
         </div>
       </header>
 
-      <main id="main-content" className="min-h-0 flex-1">
+      <main id="main-content" className="relative min-h-0 flex-1">
         <WorkspacePanels
           view={view}
           resizeLabel={t.resize}
@@ -100,7 +111,7 @@ async function Workspace({ params, searchParams }: Props) {
             />
           }
           canvas={
-            isCanvasSyncConfigured() ? (
+            canvasReady ? (
               <CanvasEditor
                 key={id}
                 workspaceId={id}
@@ -111,8 +122,10 @@ async function Workspace({ params, searchParams }: Props) {
             )
           }
         />
+        <AgentPanel />
       </main>
     </div>
+    </AgentProvider>
     </WorkspaceEditorsProvider>
   );
 }
