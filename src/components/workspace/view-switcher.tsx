@@ -2,15 +2,16 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import type { Dictionary } from "@/i18n/dictionaries/en";
-import { VIEW_MODES, viewHref, type ViewMode } from "../_lib/view-mode";
+import { VIEW_MODES, viewHref, type ViewMode } from "@/lib/view-mode";
 
 // Plain links (not state), so a view is shareable and survives a reload.
 export function ViewSwitcher({
-  workspaceId,
+  basePath,
   view,
   t,
 }: {
-  workspaceId: string;
+  /** The page the views belong to: the workspace, or its public shared page. */
+  basePath: string;
   view: ViewMode;
   t: Dictionary["workspacePage"];
 }) {
@@ -25,7 +26,7 @@ export function ViewSwitcher({
           nativeButton={false}
           render={
             <Link
-              href={viewHref(workspaceId, mode)}
+              href={viewHref(basePath, mode)}
               aria-current={view === mode ? "page" : undefined}
               scroll={false}
             />

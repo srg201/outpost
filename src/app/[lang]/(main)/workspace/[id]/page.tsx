@@ -15,17 +15,20 @@ import { CanvasEditor } from "@/components/canvas/canvas-editor-loader";
 import { CommandPalette } from "@/components/command-palette";
 import { DocEditor } from "@/components/doc/doc-editor-loader";
 import { WorkspaceEditorsProvider } from "@/components/workspace/editors-context";
+import { ViewSwitcher } from "@/components/workspace/view-switcher";
+import { WorkspacePanels } from "@/components/workspace/workspace-panels";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlanButton from "@/components/web/plan-button";
 import { isCanvasSyncConfigured } from "@/lib/canvas-ticket";
+import { parseViewMode, viewHref } from "@/lib/view-mode";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { EditableWorkspaceName } from "./_components/editable-workspace-name";
+import { ShareDialog } from "./_components/share-dialog";
 import { PendingSurface } from "./_components/pending-surface";
-import { ViewSwitcher } from "./_components/view-switcher";
-import { WorkspacePanels } from "./_components/workspace-panels";
+
 import { getWorkspace } from "./_lib/get-workspace";
-import { parseViewMode, viewHref } from "./_lib/view-mode";
+
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/workspace/[id]">): Promise<Metadata> {
   // Reads the session, so the title streams in with the page (the page is dynamic anyway).
@@ -62,7 +65,7 @@ async function Workspace({ params, searchParams }: Props) {
       workspaceId={id}
       initialPrompt={typeof prompt === "string" ? prompt : undefined}
       needs={{ doc: view !== "canvas", canvas: view !== "doc" && canvasReady }}
-      cleanUrl={viewHref(id, view)}
+      cleanUrl={viewHref(`/workspace/${id}`, view)}
     >
     <div className="flex h-dvh flex-col overflow-hidden">
       {/* Name on the left, view switcher in the middle, account and tools on the right.
@@ -82,10 +85,17 @@ async function Workspace({ params, searchParams }: Props) {
         </div>
 
         <div className="col-span-full row-start-2 justify-self-center sm:col-span-1 sm:col-start-2 sm:row-start-1">
-          <ViewSwitcher workspaceId={id} view={view} t={t} />
+          <ViewSwitcher basePath={`/workspace/${id}`} view={view} t={t} />
         </div>
 
         <div className="flex items-center justify-end gap-2 sm:col-start-3">
+          <ShareDialog
+            workspaceId={id}
+            workspaceName={workspace.name}
+            initialShareToken={workspace.shareToken}
+            canShare={workspace.entitlements.publicSharing}
+            canExportPdf={workspace.entitlements.pdfExport}
+          />
           <AgentButton />
           <div className="hidden lg:block">
             <CommandPalette />

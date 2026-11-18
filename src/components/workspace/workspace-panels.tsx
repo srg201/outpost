@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { ViewMode } from "../_lib/view-mode";
+import type { ViewMode } from "@/lib/view-mode";
 
 // Doc and canvas side by side, or stacked on narrow screens where side by side is too tight.
 export function WorkspacePanels({

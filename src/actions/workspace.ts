@@ -1,10 +1,11 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { auth } from "@clerk/nextjs/server";
 import { refresh } from "next/cache";
 
 import { WorkspaceStatus } from "@/generated/prisma/enums";
-import { getEntitlements, workspaceOwnerSelect } from "@/lib/billing";
+import { getEntitlements, getWorkspaceOwnerId, workspaceOwnerSelect } from "@/lib/billing";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { FREE_WORKSPACE_LIMIT, type LimitError } from "@/lib/plan-limits";
@@ -106,6 +107,26 @@ export async function moveWorkspace(workspaceId: string, status: WorkspaceStatus
   await assertAccess(workspaceId);
 
   await prisma.workspace.update({ where: { id: workspaceId }, data: { status, position } });
+}
+
+export type SharingResult = { shareToken: string | null } | { limit: LimitError };
+
+/**
+ * Turns the public, read-only link on (with a fresh token, which also invalidates an old link) or
+ * off. Only plans with public sharing can turn it on; anyone with access can turn it off.
+ */
+export async function setWorkspaceSharing(workspaceId: string, enabled: boolean): Promise<SharingResult> {
+  await assertAccess(workspaceId);
+
+  if (enabled) {
+    const { publicSharing } = await getEntitlements(await getWorkspaceOwnerId(workspaceId));
+    if (!publicSharing) return { limit: "sharing" };
+  }
+
+  // 192 random bits: the token is the only thing protecting a shared workspace.
+  const shareToken = enabled ? randomBytes(24).toString("base64url") : null;
+  await prisma.workspace.update({ where: { id: workspaceId }, data: { shareToken } });
+  return { shareToken };
 }
 
 export type WorkspaceSearchItem = { id: string; name: string; status: WorkspaceStatus };

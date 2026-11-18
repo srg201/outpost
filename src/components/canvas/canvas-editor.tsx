@@ -1,17 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useTheme } from "next-themes";
 import {
   Tldraw,
   UserRecordType,
   atom,
-  computed,
-  createTLCurrentUser,
   createUserId,
   defaultBindingUtils,
-  getUserPreferences,
   inlineBase64AssetStore,
   type Editor,
   type TLEditorSnapshot,
@@ -22,10 +18,10 @@ import "tldraw/tldraw.css";
 import { useWorkspaceEditors } from "@/components/workspace/editors-context";
 import { getCanvasTicket, saveCanvasContent } from "@/actions/canvas";
 import type { Prisma } from "@/generated/prisma/client";
-import { useI18n } from "@/i18n/client";
 import { colorForUser } from "@/lib/utils";
 import { allShapeUtils, canvasComponents, canvasFrameClass, customShapeUtils } from "./canvas-config";
 import { snapArrowToRow } from "./entity-table/snap-arrow-to-row";
+import { useCanvasUser } from "./use-canvas-user";
 
 const SAVE_DEBOUNCE_MS = 1000;
 const SYNC_URL = process.env.NEXT_PUBLIC_TLDRAW_SYNC_URL;
@@ -50,9 +46,6 @@ export function CanvasEditor(props: CanvasEditorProps) {
 }
 
 function SyncedCanvas({ workspaceId, initialSnapshot, identity }: CanvasEditorProps & { identity: Identity }) {
-  const { locale } = useI18n();
-  const { resolvedTheme } = useTheme();
-  const colorScheme = resolvedTheme === "light" ? "light" : "dark";
   const { setCanvasEditor } = useWorkspaceEditors();
 
   const { id: userId, name, imageUrl } = identity;
@@ -64,27 +57,7 @@ function SyncedCanvas({ workspaceId, initialSnapshot, identity }: CanvasEditorPr
     [userId, name, color, imageUrl],
   );
 
-  // The editor's own preferences: name, color, language and theme follow the app; everything else
-  // (snap mode, etc.) is tldraw's locally stored preferences. The theme can change without a
-  // remount, so it goes through an atom the preferences read.
-  const [themeAtom] = useState(() => atom<"light" | "dark">("colorScheme", colorScheme));
-  useEffect(() => {
-    themeAtom.set(colorScheme);
-  }, [themeAtom, colorScheme]);
-  const currentUser = useMemo(
-    () =>
-      createTLCurrentUser({
-        userPreferences: computed("outpostUserPreferences", () => ({
-          ...getUserPreferences(),
-          id: userId,
-          name,
-          color,
-          locale,
-          colorScheme: themeAtom.get(),
-        })),
-      }),
-    [userId, name, color, locale, themeAtom],
-  );
+  const currentUser = useCanvasUser({ id: userId, name, color });
 
   // Called on every connection attempt, so each reconnect gets a fresh ticket. Must keep its
   // identity: useSync tears down the store and reconnects whenever `uri` changes.

@@ -6,6 +6,7 @@ export function parseViewMode(value: string | string[] | undefined): ViewMode {
   return value === "doc" || value === "canvas" ? value : "both";
 }
 
-export function viewHref(workspaceId: string, mode: ViewMode) {
-  return mode === "both" ? `/workspace/${workspaceId}` : `/workspace/${workspaceId}?view=${mode}`;
+/** The URL of a view: `basePath` is the workspace page or its public shared page. */
+export function viewHref(basePath: string, mode: ViewMode) {
+  return mode === "both" ? basePath : `${basePath}?view=${mode}`;
 }
