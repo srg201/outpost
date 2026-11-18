@@ -12,6 +12,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toast";
 import AppShell from "@/components/web/app-shell";
 import { SiteFooter } from "@/components/web/site-footer";
+import { UpgradeDialogProvider } from "@/components/workspace/upgrade-dialog";
 import { I18nProvider } from "@/i18n/client";
 import { LOCALES } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
@@ -84,10 +85,13 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           <ClerkProvider appearance={{ theme: shadcn }} localization={locale === "ru" ? ruRU : undefined}>
             <I18nProvider locale={locale} dict={dict}>
               <TooltipProvider>
-                {/* AppShell reads the pathname, which Cache Components requires inside Suspense */}
-                <Suspense>
-                  <AppShell footer={<SiteFooter />}>{children}</AppShell>
-                </Suspense>
+                {/* Global, so the header's command palette can open it too. */}
+                <UpgradeDialogProvider>
+                  {/* AppShell reads the pathname, which Cache Components requires inside Suspense */}
+                  <Suspense>
+                    <AppShell footer={<SiteFooter />}>{children}</AppShell>
+                  </Suspense>
+                </UpgradeDialogProvider>
               </TooltipProvider>
               <Toaster />
             </I18nProvider>

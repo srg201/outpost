@@ -37,8 +37,9 @@ export function DashboardPrompt() {
   const submit = async () => {
     if (!canSubmit) return;
     const text = prompt.trim();
-    const result = await create(nameFromPrompt(text));
-    if (!result) return;
+    const response = await create(nameFromPrompt(text));
+    if (!response.ok) return;
+    const result = response.data;
     if ("limit" in result) {
       openUpgrade(result.limit);
       return;

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { enUS, ru } from "date-fns/locale";
@@ -8,6 +9,7 @@ import { DashboardSquare01Icon } from "@hugeicons/core-free-icons";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useI18n } from "@/i18n/client";
+import { cn } from "@/lib/utils";
 import type { WorkspaceCardData } from "@/lib/workspace-status";
 
 const DATE_LOCALES = { en: enUS, ru };
@@ -23,13 +25,30 @@ function initials(name: string | null) {
 
 // The whole card is clickable through the title link's stretched ::after.
 // A Client Component, so the board can drag it; the relative time may tick between server and client.
-export function WorkspaceCard({ workspace, showStatus }: { workspace: WorkspaceCardData; showStatus?: boolean }) {
+export function WorkspaceCard({
+  workspace,
+  showStatus,
+  highlighted,
+  actions,
+}: {
+  workspace: WorkspaceCardData;
+  showStatus?: boolean;
+  /** e.g. while the card is being dragged */
+  highlighted?: boolean;
+  /** Menu button in the top-right corner; it sits above the stretched link. */
+  actions?: ReactNode;
+}) {
   const { creator } = workspace;
   const { locale, dict } = useI18n();
 
   return (
-    <article className="group relative flex h-36 flex-col rounded-2xl border bg-card/50 p-4 transition-colors focus-within:ring-2 focus-within:ring-ring/50 hover:border-foreground/20 hover:bg-card">
-      <h3 className="truncate font-medium">
+    <article
+      className={cn(
+        "group relative flex h-36 flex-col rounded-2xl border bg-card/50 p-4 transition-[background-color,border-color,box-shadow] has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring/50 hover:border-foreground/20 hover:bg-card",
+        highlighted && "border-primary/40 bg-card shadow-xl ring-2 ring-primary/30",
+      )}
+    >
+      <h3 className={cn("truncate font-medium", actions && "pr-8")}>
         <Link
           href={`/workspace/${workspace.id}`}
           className="outline-none after:absolute after:inset-0 after:rounded-2xl"
@@ -56,6 +75,8 @@ export function WorkspaceCard({ workspace, showStatus }: { workspace: WorkspaceC
           <AvatarFallback className="text-[10px]">{initials(creator.name)}</AvatarFallback>
         </Avatar>
       </div>
+
+      {actions && <div className="absolute top-2 right-2 z-10">{actions}</div>}
     </article>
   );
 }

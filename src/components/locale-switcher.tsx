@@ -16,7 +16,7 @@ import { LOCALE_COOKIE, LOCALE_NAMES, LOCALES, hasLocale, splitLocale } from "@/
 
 // Saves the choice in the cookie the proxy reads, then reloads: the root layout (and <html lang>)
 // depends on the locale, so a full load is the simplest way to switch every part of the page.
-function switchLocale(next: string) {
+export function switchLocale(next: string) {
   if (!hasLocale(next)) return;
   document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
   const { locale, path } = splitLocale(window.location.pathname);

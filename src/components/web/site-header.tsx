@@ -10,6 +10,7 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
+  useAuth,
 } from "@clerk/nextjs";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
@@ -32,6 +33,7 @@ import {
 } from "../ui/navigation-menu";
 import { ModeToggle } from "../mode-toggle";
 import { LocaleSwitcher } from "../locale-switcher";
+import { CommandPalette } from "../command-palette";
 import { useI18n } from "@/i18n/client";
 import { splitLocale } from "@/i18n/config";
 import { Logo } from "./logo";
@@ -41,12 +43,22 @@ import PlanButton from "./plan-button";
 const SiteHeader = () => {
   const { path: pathname } = splitLocale(usePathname());
   const isLandingPage = pathname === "/";
+  const { isSignedIn } = useAuth();
   const { nav, common } = useI18n().dict;
-  const navLinks = [
-    { href: "/#product", label: nav.product },
-    { href: "/#how-it-works", label: nav.howItWorks },
-    { href: "/#pricing", label: nav.pricing },
-  ];
+  // The landing page links to its sections; inside the app the header links its main pages.
+  const navLinks = isLandingPage
+    ? [
+        { href: "/#product", label: nav.product },
+        { href: "/#how-it-works", label: nav.howItWorks },
+        { href: "/#pricing", label: nav.pricing },
+      ]
+    : isSignedIn
+      ? [
+          { href: "/dashboard", label: common.dashboard },
+          { href: "/workspaces", label: nav.board },
+        ]
+      : [];
+  const isCurrent = (href: string) => href === pathname;
   // Each link in the mobile menu closes it on click.
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -55,12 +67,16 @@ const SiteHeader = () => {
       <Logo className="justify-self-start" priority />
 
       {/* Desktop nav */}
-      {isLandingPage && (
+      {navLinks.length > 0 && (
         <NavigationMenu aria-label={nav.main} className="hidden md:flex">
           <NavigationMenuList className="gap-1">
             {navLinks.map((link) => (
               <NavigationMenuItem key={link.href}>
-                <NavigationMenuLink render={<Link href={link.href} />} className="px-4 py-2 font-medium">
+                <NavigationMenuLink
+                  render={<Link href={link.href} aria-current={isCurrent(link.href) ? "page" : undefined} />}
+                  active={isCurrent(link.href)}
+                  className="px-4 py-2 font-medium data-active:bg-muted"
+                >
                   {link.label}
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -87,9 +103,16 @@ const SiteHeader = () => {
               </SignUpButton>
             </Show>
             <Show when="signed-in">
-              {isLandingPage ? <Button nativeButton={false} render={<Link href="/dashboard" />}>
-                {common.dashboard}
-              </Button> : <PlanButton />}
+              {isLandingPage ? (
+                <Button nativeButton={false} render={<Link href="/dashboard" />}>
+                  {common.dashboard}
+                </Button>
+              ) : (
+                <>
+                  <CommandPalette />
+                  <PlanButton />
+                </>
+              )}
               <UserButton />
             </Show>
           </Suspense>

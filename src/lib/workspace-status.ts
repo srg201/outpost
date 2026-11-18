@@ -20,9 +20,10 @@ export const workspaceCardSelect = {
 type WorkspaceCardRow = Prisma.WorkspaceGetPayload<{ select: typeof workspaceCardSelect }>;
 
 // Editing the doc or canvas counts as activity, not only renaming the workspace.
-export function withLastActivity({ doc, canvas, ...workspace }: WorkspaceCardRow) {
+// Generic, so extra selected fields (like the board's `position`) pass through.
+export function withLastActivity<T extends WorkspaceCardRow>({ doc, canvas, ...workspace }: T) {
   const dates = [workspace.updatedAt, doc?.updatedAt, canvas?.updatedAt].filter((d): d is Date => !!d);
   return { ...workspace, lastActivity: max(dates) };
 }
 
-export type WorkspaceCardData = ReturnType<typeof withLastActivity>;
+export type WorkspaceCardData = ReturnType<typeof withLastActivity<WorkspaceCardRow>>;

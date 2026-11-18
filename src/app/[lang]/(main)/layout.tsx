@@ -1,10 +1,4 @@
-import { UpgradeDialogProvider } from "@/components/workspace/upgrade-dialog";
-
-// Signed-in app pages. Any of them can open the upgrade dialog with useUpgradeDialog().
+// Signed-in app pages (dashboard, board, workspace).
 export default function MainLayout({ children }: LayoutProps<"/[lang]">) {
-  return (
-    <UpgradeDialogProvider>
-      <div className="flex flex-1 flex-col">{children}</div>
-    </UpgradeDialogProvider>
-  );
+  return <div className="flex flex-1 flex-col">{children}</div>;
 }
