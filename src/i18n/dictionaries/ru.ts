@@ -317,6 +317,15 @@ const ru: Dictionary = {
       },
     },
   },
+  teams: {
+    switch: "Сменить команду",
+    heading: "Команды",
+    personal: "Личное",
+    personalHint: "Только вы",
+    create: "Создать команду",
+    settings: "Настройки команды",
+    switchFailed: "Не удалось сменить команду",
+  },
 };
 
 export default ru;

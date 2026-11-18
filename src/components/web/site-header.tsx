@@ -38,6 +38,7 @@ import { useI18n } from "@/i18n/client";
 import { splitLocale } from "@/i18n/config";
 import { Logo } from "./logo";
 import PlanButton from "./plan-button";
+import { TeamSwitcher } from "./team-switcher";
 
 
 const SiteHeader = () => {
@@ -109,7 +110,10 @@ const SiteHeader = () => {
                   {common.dashboard}
                 </Button>
               ) : (
-                <PlanButton />
+                <>
+                  <TeamSwitcher />
+                  <PlanButton />
+                </>
               )}
               <UserButton />
             </Show>
@@ -185,6 +189,7 @@ const SiteHeader = () => {
                     </Button>
                   </Show>
                   <Show when="signed-in">
+                    <TeamSwitcher className="h-12 max-w-none justify-start px-3 text-base" />
                     <Button
                       size="lg"
                       nativeButton={false}

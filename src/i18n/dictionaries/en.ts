@@ -316,6 +316,15 @@ const en = {
       },
     },
   },
+  teams: {
+    switch: "Switch team",
+    heading: "Teams",
+    personal: "Personal",
+    personalHint: "Only you",
+    create: "Create team",
+    settings: "Team settings",
+    switchFailed: "Couldn't switch team",
+  },
 };
 
 export type Dictionary = typeof en;
