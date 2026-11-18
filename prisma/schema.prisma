@@ -52,8 +52,10 @@ model Doc {
   id            String    @id @default(cuid())
   workspaceId   String    @unique
   workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  contentType   Json?
-  yjsStateBytes Bytes?
+  // BlockNote block JSON: a readable copy for server-side features (agent, share view).
+  content       Json?
+  // Yjs document state: the source of truth for real-time collaboration.
+  yjsState      Bytes?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -62,7 +64,8 @@ model Canvas {
   id          String    @id @default(cuid())
   workspaceId String    @unique
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  contentType Json?
+  // tldraw store snapshot.
+  content     Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -75,9 +78,8 @@ model AgentPrompt {
   createdAt   DateTime @default(now())
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  // SetNull: rows outlive their workspace, so deleting one can't reset monthly usage.
+  workspace Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
 
   @@index([ownerId, createdAt])
-  // @@index([userId])
-  // @@index([workspaceId])
 }
