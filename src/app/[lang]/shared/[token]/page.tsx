@@ -8,15 +8,18 @@ import { notFound } from "next/navigation";
 import type { Block } from "@blocknote/core";
 import type { TLEditorSnapshot } from "tldraw";
 
+import { PenTool03Icon } from "@hugeicons/core-free-icons";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PendingSurface } from "@/components/workspace/pending-surface";
 import { CanvasViewer, DocViewer } from "@/components/workspace/shared-viewers";
 import { ViewSwitcher } from "@/components/workspace/view-switcher";
 import { WorkspacePanels } from "@/components/workspace/workspace-panels";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { hasTldrawLicense } from "@/lib/canvas-availability";
 import { getEntitlements, workspaceOwnerId, workspaceOwnerSelect } from "@/lib/billing";
 import { prisma } from "@/lib/prisma";
 import { parseViewMode } from "@/lib/view-mode";
@@ -104,7 +107,13 @@ async function SharedWorkspace({ params, searchParams }: Props) {
           view={view}
           resizeLabel={dict.workspacePage.resize}
           doc={<DocViewer content={workspace.doc?.content as Block[] | null} />}
-          canvas={<CanvasViewer snapshot={workspace.canvas?.content as TLEditorSnapshot | null} />}
+          canvas={
+            hasTldrawLicense() ? (
+              <CanvasViewer snapshot={workspace.canvas?.content as TLEditorSnapshot | null} />
+            ) : (
+              <PendingSurface icon={PenTool03Icon} title={dict.workspacePage.canvasPanel} text={t.canvasUnavailable} />
+            )
+          }
         />
       </main>
     </div>

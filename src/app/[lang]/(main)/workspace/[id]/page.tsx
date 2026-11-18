@@ -20,12 +20,12 @@ import { WorkspacePanels } from "@/components/workspace/workspace-panels";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlanButton from "@/components/web/plan-button";
-import { isCanvasSyncConfigured } from "@/lib/canvas-ticket";
+import { getCanvasAvailability } from "@/lib/canvas-availability";
 import { parseViewMode, viewHref } from "@/lib/view-mode";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { EditableWorkspaceName } from "./_components/editable-workspace-name";
 import { ShareDialog } from "./_components/share-dialog";
-import { PendingSurface } from "./_components/pending-surface";
+import { PendingSurface } from "@/components/workspace/pending-surface";
 
 import { getWorkspace } from "./_lib/get-workspace";
 
@@ -56,7 +56,8 @@ async function Workspace({ params, searchParams }: Props) {
   const t = dict.workspacePage;
   const view = parseViewMode(viewParam);
   const { doc, canvas } = workspace;
-  const canvasReady = isCanvasSyncConfigured();
+  const canvasAvailability = getCanvasAvailability();
+  const canvasReady = canvasAvailability === "ready";
 
   return (
     // Lets header tools (agent, share) reach the live editors inside the panels.
@@ -128,7 +129,11 @@ async function Workspace({ params, searchParams }: Props) {
                 initialSnapshot={canvas?.content as TLEditorSnapshot | null}
               />
             ) : (
-              <PendingSurface icon={PenTool03Icon} title={t.canvasPanel} text={t.canvasUnavailable} />
+              <PendingSurface
+                icon={PenTool03Icon}
+                title={t.canvasPanel}
+                text={canvasAvailability === "no-license" ? t.canvasNeedsLicense : t.canvasUnavailable}
+              />
             )
           }
         />

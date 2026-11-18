@@ -178,6 +178,7 @@ const ru: Dictionary = {
     saved: "Сохранено",
     saveFailed: "Не удалось сохранить. Повторим при следующей правке.",
     canvasUnavailable: "Живой холст не настроен на этом сервере (NEXT_PUBLIC_TLDRAW_SYNC_URL и CANVAS_SYNC_SECRET).",
+    canvasNeedsLicense: "Для холста на этом сайте нужен ключ лицензии tldraw (NEXT_PUBLIC_TLDRAW_LICENSE_KEY). Документ и агент работают.",
   },
   board: {
     title: "Все пространства",
@@ -278,6 +279,7 @@ const ru: Dictionary = {
     snapshotHint: "Копия только для чтения на момент последнего сохранения.",
     cta: "Создать своё",
     emptyDoc: "Документ пуст.",
+    canvasUnavailable: "Предпросмотр холста на этом сайте пока недоступен.",
   },
   palette: {
     title: "Командная палитра",

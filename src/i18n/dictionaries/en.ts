@@ -177,6 +177,7 @@ const en = {
     saved: "Saved",
     saveFailed: "Couldn't save. Retrying with your next edit.",
     canvasUnavailable: "Live canvas isn't set up on this server (NEXT_PUBLIC_TLDRAW_SYNC_URL and CANVAS_SYNC_SECRET).",
+    canvasNeedsLicense: "The canvas needs a tldraw license key on this deployment (NEXT_PUBLIC_TLDRAW_LICENSE_KEY). Docs and the agent still work.",
   },
   board: {
     title: "All workspaces",
@@ -277,6 +278,7 @@ const en = {
     snapshotHint: "A read-only copy from the last save.",
     cta: "Make your own",
     emptyDoc: "This doc is empty.",
+    canvasUnavailable: "The canvas preview isn't available on this site yet.",
   },
   palette: {
     title: "Command palette",
