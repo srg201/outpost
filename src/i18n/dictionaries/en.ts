@@ -163,6 +163,18 @@ const en = {
     dictate: "Dictate",
     stopDictation: "Stop dictation",
   },
+  workspacePage: {
+    back: "Back to dashboard",
+    rename: "Rename workspace",
+    nameLabel: "Workspace name",
+    viewLabel: "View",
+    views: { doc: "Document", both: "Both", canvas: "Canvas" },
+    docPanel: "Document",
+    canvasPanel: "Canvas",
+    resize: "Resize document and canvas",
+    docPending: "The collaborative document editor goes here.",
+    canvasPending: "The canvas goes here.",
+  },
   board: {
     title: "All workspaces",
     empty: "No workspaces yet. Start one from the dashboard or with New workspace.",
