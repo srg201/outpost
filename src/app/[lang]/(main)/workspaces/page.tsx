@@ -1,43 +1,30 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon } from "@hugeicons/core-free-icons";
 
-import { checkUser } from "@/actions/check-user";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { WorkspaceDialog } from "@/components/workspace/workspace-dialog";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { prisma } from "@/lib/prisma";
-import { getWorkspaceScope } from "@/lib/workspace-scope";
-import { withLastActivity, workspaceCardSelect } from "@/lib/workspace-status";
-import { WorkspaceBoard } from "./_components/workspace-board";
+import { BoardContent, BoardSkeleton, ScopeName } from "./_components/board-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { meta } = await getDictionary();
   return { title: meta.board };
 }
 
+// The heading and the New workspace button are static; the team name and the board stream in.
 export default async function WorkspacesPage() {
-  const user = await checkUser();
-  if (!user) redirect("/sign-in?redirect_url=/workspaces");
-
-  const [{ board: t, dashboard }, { orgName, where }] = await Promise.all([
-    getDictionary(),
-    getWorkspaceScope(user.id),
-  ]);
-  const workspaces = await prisma.workspace.findMany({
-    where,
-    select: { ...workspaceCardSelect, position: true },
-    orderBy: { position: "asc" },
-  });
+  const { board: t, dashboard } = await getDictionary();
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 py-10 md:py-14">
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {orgName ?? dashboard.personal}
-          </p>
+          <Suspense fallback={<Skeleton className="h-4 w-20" />}>
+            <ScopeName />
+          </Suspense>
           <h1 className="mt-1 font-heading text-2xl font-semibold tracking-tight md:text-3xl">{t.title}</h1>
         </div>
         <WorkspaceDialog
@@ -50,13 +37,9 @@ export default async function WorkspacesPage() {
         />
       </header>
 
-      {workspaces.length === 0 ? (
-        <p className="rounded-2xl border border-dashed px-6 py-16 text-center text-sm text-muted-foreground">
-          {t.empty}
-        </p>
-      ) : (
-        <WorkspaceBoard workspaces={workspaces.map(withLastActivity)} />
-      )}
+      <Suspense fallback={<BoardSkeleton />}>
+        <BoardContent />
+      </Suspense>
     </div>
   );
 }

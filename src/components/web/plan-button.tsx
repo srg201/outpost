@@ -29,7 +29,7 @@ const PlanButton = () => {
   </Button>
 
   const canManage =
-    isPaid && (!orgId || has?.({ permission: "ord:sys_billing:manage" }));
+    isPaid && (!orgId || has?.({ permission: "org:sys_billing:manage" }));
 
   return (
     <div className="flex h-8 items-center overflow-hidden rounded-full border border-foreground/10 bg-background text-xs">

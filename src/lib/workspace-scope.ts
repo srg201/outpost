@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import type { Prisma } from "@/generated/prisma/client";
 
@@ -7,10 +8,11 @@ export function scopeWhere(orgId: string | null | undefined, userId: string): Pr
 }
 
 // What the dashboard and the board list, plus the team name to show above it (null = personal).
-export async function getWorkspaceScope(userId: string) {
+// Cached per request: several sections of a page ask for it.
+export const getWorkspaceScope = cache(async (userId: string) => {
   const { orgId } = await auth();
   const orgName = orgId
     ? (await (await clerkClient()).organizations.getOrganization({ organizationId: orgId })).name
     : null;
   return { orgName, where: scopeWhere(orgId, userId) };
-}
+});

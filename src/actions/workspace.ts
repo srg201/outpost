@@ -3,9 +3,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { refresh } from "next/cache";
 
-import { checkUser } from "@/actions/check-user";
 import { WorkspaceStatus } from "@/generated/prisma/enums";
 import { getEntitlements, workspaceOwnerSelect } from "@/lib/billing";
+import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { FREE_WORKSPACE_LIMIT, type LimitError } from "@/lib/plan-limits";
 import { canAccessWorkspace } from "@/lib/workspace-access";
@@ -30,7 +30,7 @@ export type CreateWorkspaceResult = { workspace: { id: string } } | { limit: Lim
 
 // Creates a workspace (with its empty doc and canvas) at the top of the Planning column.
 export async function createWorkspace(name: string, description?: string): Promise<CreateWorkspaceResult> {
-  const user = await checkUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error("Not signed in");
 
   const { orgId } = await auth();
@@ -112,7 +112,7 @@ export type WorkspaceSearchItem = { id: string; name: string; status: WorkspaceS
 
 // Everything the command palette can jump to, most recently updated first.
 export async function listWorkspacesForPalette(): Promise<WorkspaceSearchItem[]> {
-  const user = await checkUser();
+  const user = await getCurrentUser();
   if (!user) return [];
 
   const { where } = await getWorkspaceScope(user.id);

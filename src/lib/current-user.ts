@@ -1,17 +1,19 @@
-"use server";
+import "server-only";
 
+import { cache } from "react";
 import { currentUser } from "@clerk/nextjs/server";
 
 import { prisma } from "@/lib/prisma";
 
 /**
- * Returns the database user for the signed-in Clerk user, creating or
- * refreshing it on first visit. Returns null when signed out or when the
+ * The database user for the signed-in Clerk user, created or refreshed on the way (an upsert,
+ * so two concurrent requests can't both create the row). Null when signed out or when the
  * Clerk account has no email address.
  *
- * Uses an upsert so two concurrent requests can't both try to create the row.
+ * Server-only rather than a Server Action, so it isn't exposed as an endpoint. `cache` makes
+ * every caller in one request (page, sections, metadata) share a single lookup.
  */
-export async function checkUser() {
+export const getCurrentUser = cache(async () => {
   const clerkUser = await currentUser();
   if (!clerkUser) return null;
 
@@ -25,4 +27,4 @@ export async function checkUser() {
     create: { clerkId: clerkUser.id, email, name, imageUrl: clerkUser.imageUrl },
     update: { email, name, imageUrl: clerkUser.imageUrl },
   });
-}
+});
