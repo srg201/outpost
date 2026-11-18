@@ -24,6 +24,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "../ui/navigation-menu";
 import { ModeToggle } from "../mode-toggle";
 import { Logo } from "./logo";
 
@@ -46,16 +52,17 @@ const SiteHeader = () => {
 
       {/* Desktop nav */}
       {isLandingPage && (
-        <nav aria-label="Main" className="hidden items-center gap-1 md:flex lg:gap-4">
-          {NAV_LINKS.map((link) => (
-            <Button
-              key={link.href}
-              nativeButton={false}
-              variant="link"
-              render={<Link href={link.href}>{link.label}</Link>}
-            />
-          ))}
-        </nav>
+        <NavigationMenu aria-label="Main" className="hidden md:flex">
+          <NavigationMenuList className="gap-1">
+            {NAV_LINKS.map((link) => (
+              <NavigationMenuItem key={link.href}>
+                <NavigationMenuLink render={<Link href={link.href} />} className="px-4 py-2 font-medium">
+                  {link.label}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
       )}
 
       {/* Desktop actions. Fixed height keeps the nav centered while Clerk loads */}
@@ -99,7 +106,7 @@ const SiteHeader = () => {
           <SheetTrigger
             render={
               <Button variant="ghost" size="icon" aria-label="Open menu">
-                <HugeiconsIcon icon={Menu01Icon} className="size-5" />
+                <HugeiconsIcon icon={Menu01Icon} className="size-5" aria-hidden />
               </Button>
             }
           />
@@ -109,16 +116,19 @@ const SiteHeader = () => {
               <Logo className="w-fit" />
             </SheetHeader>
 
-            <nav aria-label="Mobile" className="flex flex-col p-2">
+            <nav aria-label="Mobile" className="flex flex-col gap-1 p-2">
               {NAV_LINKS.map((link) => (
-                <Link
+                <Button
                   key={link.href}
-                  href={link.href}
+                  variant="ghost"
+                  size="lg"
+                  className="h-12 justify-start rounded-lg px-3 text-base"
+                  nativeButton={false}
+                  render={<Link href={link.href} />}
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
                 >
                   {link.label}
-                </Link>
+                </Button>
               ))}
             </nav>
 

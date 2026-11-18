@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { PauseIcon, PlayIcon } from "@hugeicons/core-free-icons";
 
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
+
 /**
  * Looping product demo. Autoplays muted, except for users who prefer reduced
  * motion (they see the poster and can press play). Always has a visible
@@ -30,30 +33,34 @@ export function HeroVideo() {
 
   return (
     <div className="group/video relative overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-2xl shadow-black/20">
-      <video
-        ref={videoRef}
-        className="aspect-video w-full object-cover"
-        poster="/videos/hero-poster.jpg"
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-label="Outpost product demo: an AI agent drawing an architecture diagram on the canvas"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-      >
-        <source src="/videos/hero.webm" type="video/webm" />
-        <source src="/videos/hero.mp4" type="video/mp4" />
-      </video>
+      <AspectRatio ratio={16 / 9}>
+        <video
+          ref={videoRef}
+          className="size-full object-cover"
+          poster="/videos/hero-poster.jpg"
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-label="Outpost product demo: an AI agent drawing an architecture diagram on the canvas"
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+        >
+          <source src="/videos/hero.webm" type="video/webm" />
+          <source src="/videos/hero.mp4" type="video/mp4" />
+        </video>
+      </AspectRatio>
 
-      <button
+      <Button
         type="button"
+        variant="secondary"
+        size="icon-sm"
         onClick={toggle}
         aria-label={playing ? "Pause demo video" : "Play demo video"}
-        className="absolute right-3 bottom-3 flex size-9 items-center justify-center rounded-full border border-white/15 bg-black/50 text-white opacity-70 backdrop-blur-sm transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-[3px] focus-visible:ring-amber-500/60 focus-visible:outline-none group-hover/video:opacity-100"
+        className="absolute right-3 bottom-3 border border-white/15 bg-black/50 text-white opacity-70 backdrop-blur-sm hover:bg-black/70 hover:opacity-100 focus-visible:opacity-100 group-hover/video:opacity-100"
       >
-        <HugeiconsIcon icon={playing ? PauseIcon : PlayIcon} className="size-4" aria-hidden />
-      </button>
+        <HugeiconsIcon icon={playing ? PauseIcon : PlayIcon} aria-hidden />
+      </Button>
     </div>
   );
 }

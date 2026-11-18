@@ -20,7 +20,7 @@ const AppShell = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-1 flex-col pt-18">
       <a
         href="#main-content"
-        className="fixed top-3 left-3 z-50 -translate-y-20 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg transition-transform focus-visible:translate-y-0 focus-visible:outline-none"
+        className="sr-only rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:outline-none"
       >
         Skip to content
       </a>

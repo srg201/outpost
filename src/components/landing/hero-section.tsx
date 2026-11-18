@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 import { Button } from "@/components/ui/button";
+import { StartBuildingButton } from "./start-building-button";
 import { Eyebrow } from "./section-heading";
 import { HeroVideo } from "./hero-video";
 
@@ -30,10 +29,7 @@ export function HeroSection() {
         </p>
 
         <div className="fade-up mt-10 flex w-full flex-col gap-3 [--fade-delay:300ms] sm:w-auto sm:flex-row">
-          <Button size="lg" nativeButton={false} render={<Link href="/sign-up" />}>
-            Start Building Free
-            <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" aria-hidden />
-          </Button>
+          <StartBuildingButton />
           <Button size="lg" variant="outline" nativeButton={false} render={<Link href="#how-it-works" />}>
             See How It Works
           </Button>
