@@ -16,6 +16,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -61,7 +62,9 @@ export function CommandPalette() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() !== "k" || !(event.metaKey || event.ctrlKey) || event.repeat) return;
+      // `code` is the physical key, so the shortcut also works on other layouts (Russian gives key "л").
+      const isK = event.code === "KeyK" || event.key.toLowerCase() === "k";
+      if (!isK || !(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey || event.repeat) return;
       event.preventDefault();
       if (open) setOpen(false);
       else show();
@@ -96,6 +99,8 @@ export function CommandPalette() {
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen} title={t.title} description={t.description}>
+        {/* shadcn's CommandDialog doesn't create the cmdk root itself; without it cmdk crashes on open. */}
+        <Command>
         <CommandInput placeholder={t.placeholder} />
         <CommandList>
           <CommandEmpty>{workspaces === null ? t.loading : t.empty}</CommandEmpty>
@@ -143,6 +148,7 @@ export function CommandPalette() {
             ))}
           </CommandGroup>
         </CommandList>
+        </Command>
       </CommandDialog>
 
       <WorkspaceDialog open={creating} onOpenChange={setCreating} />

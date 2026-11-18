@@ -103,15 +103,13 @@ const SiteHeader = () => {
               </SignUpButton>
             </Show>
             <Show when="signed-in">
+              <CommandPalette />
               {isLandingPage ? (
                 <Button nativeButton={false} render={<Link href="/dashboard" />}>
                   {common.dashboard}
                 </Button>
               ) : (
-                <>
-                  <CommandPalette />
-                  <PlanButton />
-                </>
+                <PlanButton />
               )}
               <UserButton />
             </Show>
