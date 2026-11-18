@@ -6,6 +6,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/client";
 
 /**
  * Primary call to action. Signed-in users go straight to their dashboard;
@@ -15,11 +16,12 @@ import { Button } from "@/components/ui/button";
  */
 export function StartBuildingButton({ className }: { className?: string }) {
   const { isSignedIn } = useAuth();
+  const { hero } = useI18n().dict;
   const href = isSignedIn ? "/dashboard" : "/sign-up";
 
   return (
     <Button size="lg" className={className} nativeButton={false} render={<Link href={href} />}>
-      Start Building Free
+      {hero.start}
       <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" aria-hidden />
     </Button>
   );

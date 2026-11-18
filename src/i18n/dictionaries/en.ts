@@ -1,0 +1,189 @@
+// English is the source dictionary: its shape is the `Dictionary` type every locale must match.
+const en = {
+  meta: {
+    title: "Outpost: docs, canvas and an AI agent in one workspace",
+    description:
+      "Plan in docs, sketch on the canvas, and let an AI agent turn your ideas into diagrams, all in one workspace for you and your team.",
+    signIn: "Sign in",
+    signUp: "Sign up",
+    dashboard: "Dashboard",
+    board: "Board",
+  },
+  common: {
+    skipToContent: "Skip to content",
+    homeLabel: "Outpost home",
+    signIn: "Sign in",
+    signUp: "Sign up",
+    dashboard: "Dashboard",
+    cancel: "Cancel",
+    somethingWentWrong: "Something went wrong",
+    freePlan: "Free",
+    language: "Language",
+  },
+  theme: {
+    toggle: "Toggle theme",
+    light: "Light",
+    dark: "Dark",
+    system: "System",
+  },
+  nav: {
+    main: "Main",
+    mobile: "Mobile",
+    openMenu: "Open menu",
+    menu: "Menu",
+    product: "Product",
+    howItWorks: "How it works",
+    pricing: "Pricing",
+    board: "Board",
+  },
+  footer: {
+    tagline: "Docs, canvas and an AI agent in one workspace.",
+    label: "Footer",
+    product: "Product",
+    features: "Features",
+    account: "Account",
+    earlyAccess: "Early Access",
+  },
+  hero: {
+    eyebrow: "Early Access",
+    titleBefore: "An",
+    titleAfter: "for wherever you're building",
+    description:
+      "Plan in docs, sketch on the canvas, and let an AI agent turn your ideas into diagrams, all in one workspace for you and your team.",
+    start: "Start Building Free",
+    howItWorks: "See How It Works",
+    videoLabel: "Outpost product demo: an AI agent drawing an architecture diagram on the canvas",
+    play: "Play demo video",
+    pause: "Pause demo video",
+  },
+  product: {
+    eyebrow: "Product",
+    title: "Docs, canvas and an agent.",
+    titleMuted: "One workspace.",
+    description: "Every workspace pairs a document with a canvas, and an AI agent that can work in both.",
+    pillars: {
+      doc: {
+        title: "Doc",
+        tag: "Write",
+        description: "A live document for specs, decisions and notes. Edit together in real time, every change synced.",
+      },
+      canvas: {
+        title: "Canvas",
+        tag: "Sketch",
+        description:
+          "An open canvas for architecture, flows and wireframes. Drag shapes, connect them, rearrange freely.",
+      },
+      agent: {
+        title: "Agent",
+        tag: "Generate",
+        description:
+          "Describe what you're building. The agent draws the diagram shape by shape and drafts the doc beside it.",
+      },
+    },
+    extras: {
+      teams: { title: "Team workspaces", description: "Invite your team and work in shared workspaces." },
+      board: { title: "Status board", description: "Track each workspace from Planning to Done." },
+      share: { title: "Share links", description: "Send a read-only link to anyone, no account needed." },
+    },
+  },
+  howItWorks: {
+    eyebrow: "How it works",
+    title: "From idea to diagram in three steps",
+    description: "No blank-page problem. Start with a prompt, finish with a plan your team can read.",
+    steps: [
+      {
+        title: "Open a workspace",
+        description: "Create a workspace for a project. It comes with a doc and a canvas, ready to go.",
+        detail: "workspace / new",
+      },
+      {
+        title: "Prompt the agent",
+        description:
+          "Describe the system you're building. The agent lays out the diagram and writes the spec next to it.",
+        detail: "agent / draw",
+      },
+      {
+        title: "Refine and share",
+        description: "Edit anything by hand, move it through your status board, and share a link when it's ready.",
+        detail: "share / link",
+      },
+    ],
+  },
+  pricing: {
+    eyebrow: "Pricing",
+    title: "Simple pricing that grows with you",
+    description: "Start free, upgrade to Pro when Outpost becomes part of your day.",
+    loading: "Loading plans",
+  },
+  cta: {
+    eyebrow: "Set up camp",
+    titleBefore: "Your next project needs an",
+    description: "Create a workspace, describe what you're building, and watch the plan take shape.",
+  },
+  dashboard: {
+    promptTitle: "What are we planning today?",
+    promptDescription: "Describe it, and the agent drafts the doc and the canvas for you.",
+    promptLabel: "Describe what you want to plan",
+    promptPlaceholder: "Plan the database and API for a recipe sharing app…",
+    submit: "Start planning",
+    examplesLabel: "Example prompts",
+    examples: [
+      "Design a blog database and document each table",
+      "Map out a user onboarding flow",
+      "Plan the architecture for a chat app",
+    ],
+    personal: "Personal",
+    recent: "Recent workspaces",
+    viewBoard: "View board ({count})",
+    newWorkspace: "New workspace",
+    empty: "No workspaces yet. Describe what you want to plan above to start one.",
+  },
+  workspace: {
+    statuses: {
+      PLANNING: "Planning",
+      IN_PROGRESS: "In progress",
+      IN_REVIEW: "In review",
+      DONE: "Done",
+    },
+    dialog: {
+      title: "New workspace",
+      description: "Every workspace comes with a doc and a canvas.",
+      name: "Name",
+      namePlaceholder: "Chat app architecture",
+      descriptionLabel: "Description",
+      optional: "(optional)",
+      descriptionPlaceholder: "What is this workspace for?",
+      create: "Create workspace",
+      creating: "Creating…",
+    },
+    dictate: "Dictate",
+    stopDictation: "Stop dictation",
+  },
+  upgrade: {
+    default: {
+      title: "Upgrade your plan",
+      description: "Get more agent prompts, unlimited workspaces, share links and PDF export.",
+    },
+    reasons: {
+      prompts: {
+        title: "You're out of agent prompts",
+        description: "This workspace's plan has used all its prompts for this month. Upgrade for more.",
+      },
+      workspaces: {
+        title: "You've reached {limit} workspaces",
+        description: "The free plan includes {limit} workspaces. Upgrade for unlimited workspaces.",
+      },
+      sharing: {
+        title: "Public links are a paid feature",
+        description: "Upgrade to share a read-only link to this workspace with anyone.",
+      },
+      pdfExport: {
+        title: "PDF export is a paid feature",
+        description: "Upgrade to export this workspace's doc and canvas as PDFs.",
+      },
+    },
+  },
+};
+
+export type Dictionary = typeof en;
+export default en;

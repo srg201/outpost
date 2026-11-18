@@ -1,25 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Section, SectionHeading, revealDelay } from "./section-heading";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-const STEPS = [
-  {
-    title: "Open a workspace",
-    description: "Create a workspace for a project. It comes with a doc and a canvas, ready to go.",
-    detail: "workspace / new",
-  },
-  {
-    title: "Prompt the agent",
-    description: "Describe the system you're building. The agent lays out the diagram and writes the spec next to it.",
-    detail: "agent / draw",
-  },
-  {
-    title: "Refine and share",
-    description: "Edit anything by hand, move it through your status board, and share a link when it's ready.",
-    detail: "share / link",
-  },
-];
+export async function HowItWorksSection() {
+  const { howItWorks } = await getDictionary();
 
-export function HowItWorksSection() {
   return (
     <Section
       id="how-it-works"
@@ -28,9 +13,9 @@ export function HowItWorksSection() {
     >
       <SectionHeading
         id="how-it-works-title"
-        eyebrow="How it works"
-        title="From idea to diagram in three steps"
-        description="No blank-page problem. Start with a prompt, finish with a plan your team can read."
+        eyebrow={howItWorks.eyebrow}
+        title={howItWorks.title}
+        description={howItWorks.description}
       />
 
       <div className="relative mt-16">
@@ -41,7 +26,7 @@ export function HowItWorksSection() {
         />
 
         <ol className="grid gap-12 md:grid-cols-3 md:gap-6">
-          {STEPS.map((step, i) => (
+          {howItWorks.steps.map((step, i) => (
             <li
               key={step.title}
               style={revealDelay(i)}

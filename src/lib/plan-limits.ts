@@ -3,23 +3,6 @@ export const FREE_MONTHLY_PROMPTS = 20;
 
 export const PROMPT_LIMIT_ERROR = "prompt_limit_reached";
 
-export const UPGRADE_REASONS = {
-  prompts: {
-    title: "You're out of agent prompts",
-    description: "This workspace's plan has used all its prompts for this month. Upgrade for more.",
-  },
-  workspaces: {
-    title: `You've reached ${FREE_WORKSPACE_LIMIT} workspaces`,
-    description: `The free plan includes ${FREE_WORKSPACE_LIMIT} workspaces. Upgrade for unlimited workspaces.`,
-  },
-  sharing: {
-    title: "Public links are a paid feature",
-    description: "Upgrade to share a read-only link to this workspace with anyone.",
-  },
-  pdfExport: {
-    title: "PDF export is a paid feature",
-    description: "Upgrade to export this workspace's doc and canvas as PDFs.",
-  },
-};
-
-export type LimitError = keyof typeof UPGRADE_REASONS;
+// What the upgrade dialog explains; the copy for each lives in the dictionaries (upgrade.reasons).
+export const LIMIT_ERRORS = ["prompts", "workspaces", "sharing", "pdfExport"] as const;
+export type LimitError = (typeof LIMIT_ERRORS)[number];

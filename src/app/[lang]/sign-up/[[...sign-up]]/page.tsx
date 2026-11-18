@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { SignUp } from "@clerk/nextjs";
 
-export const metadata: Metadata = {
-  title: "Sign up",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getDictionary();
+  return { title: meta.signUp };
+}
 
 export default function SignUpPage() {
   return (

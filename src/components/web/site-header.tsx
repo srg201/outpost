@@ -31,18 +31,22 @@ import {
   NavigationMenuList,
 } from "../ui/navigation-menu";
 import { ModeToggle } from "../mode-toggle";
+import { LocaleSwitcher } from "../locale-switcher";
+import { useI18n } from "@/i18n/client";
+import { splitLocale } from "@/i18n/config";
 import { Logo } from "./logo";
-
-const NAV_LINKS = [
-  { href: "/#product", label: "Product" },
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#pricing", label: "Pricing" },
-];
+import PlanButton from "./plan-button";
 
 
 const SiteHeader = () => {
-  const pathname = usePathname();
+  const { path: pathname } = splitLocale(usePathname());
   const isLandingPage = pathname === "/";
+  const { nav, common } = useI18n().dict;
+  const navLinks = [
+    { href: "/#product", label: nav.product },
+    { href: "/#how-it-works", label: nav.howItWorks },
+    { href: "/#pricing", label: nav.pricing },
+  ];
   // Each link in the mobile menu closes it on click.
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -52,9 +56,9 @@ const SiteHeader = () => {
 
       {/* Desktop nav */}
       {isLandingPage && (
-        <NavigationMenu aria-label="Main" className="hidden md:flex">
+        <NavigationMenu aria-label={nav.main} className="hidden md:flex">
           <NavigationMenuList className="gap-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <NavigationMenuItem key={link.href}>
                 <NavigationMenuLink render={<Link href={link.href} />} className="px-4 py-2 font-medium">
                   {link.label}
@@ -67,6 +71,7 @@ const SiteHeader = () => {
 
       {/* Desktop actions. Fixed height keeps the nav centered while Clerk loads */}
       <div className="col-start-3 hidden h-9 items-center justify-end gap-2 md:flex">
+        <LocaleSwitcher />
         <ModeToggle />
         <ClerkLoading>
           <Skeleton className="h-8 w-36" />
@@ -75,16 +80,16 @@ const SiteHeader = () => {
           <Suspense>
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <Button variant="ghost">Sign in</Button>
+                <Button variant="ghost">{common.signIn}</Button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <Button>Sign up</Button>
+                <Button>{common.signUp}</Button>
               </SignUpButton>
             </Show>
             <Show when="signed-in">
-              <Button nativeButton={false} render={<Link href="/dashboard" />}>
-                Dashboard
-              </Button>
+              {isLandingPage ? <Button nativeButton={false} render={<Link href="/dashboard" />}>
+                {common.dashboard}
+              </Button> : <PlanButton />}
               <UserButton />
             </Show>
           </Suspense>
@@ -93,6 +98,7 @@ const SiteHeader = () => {
 
       {/* Mobile actions */}
       <div className="flex h-9 items-center gap-1 md:hidden">
+        <LocaleSwitcher />
         <ModeToggle />
         <ClerkLoaded>
           <Suspense>
@@ -105,19 +111,19 @@ const SiteHeader = () => {
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger
             render={
-              <Button variant="ghost" size="icon" aria-label="Open menu">
+              <Button variant="ghost" size="icon" aria-label={nav.openMenu}>
                 <HugeiconsIcon icon={Menu01Icon} className="size-5" aria-hidden />
               </Button>
             }
           />
           <SheetContent side="right" className="w-full max-w-xs gap-0">
             <SheetHeader className="border-b border-border/60">
-              <SheetTitle className="sr-only">Menu</SheetTitle>
+              <SheetTitle className="sr-only">{nav.menu}</SheetTitle>
               <Logo className="w-fit" />
             </SheetHeader>
 
-            <nav aria-label="Mobile" className="flex flex-col gap-1 p-2">
-              {NAV_LINKS.map((link) => (
+            <nav aria-label={nav.mobile} className="flex flex-col gap-1 p-2">
+              {navLinks.map((link) => (
                 <Button
                   key={link.href}
                   variant="ghost"
@@ -146,7 +152,7 @@ const SiteHeader = () => {
                       render={<Link href="/sign-in" />}
                       onClick={() => setMenuOpen(false)}
                     >
-                      Sign in
+                      {common.signIn}
                     </Button>
                     <Button
                       size="lg"
@@ -154,7 +160,7 @@ const SiteHeader = () => {
                       render={<Link href="/sign-up" />}
                       onClick={() => setMenuOpen(false)}
                     >
-                      Sign up
+                      {common.signUp}
                     </Button>
                   </Show>
                   <Show when="signed-in">
@@ -164,7 +170,7 @@ const SiteHeader = () => {
                       render={<Link href="/dashboard" />}
                       onClick={() => setMenuOpen(false)}
                     >
-                      Dashboard
+                      {common.dashboard}
                     </Button>
                   </Show>
                 </Suspense>

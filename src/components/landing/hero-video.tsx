@@ -6,6 +6,7 @@ import { PauseIcon, PlayIcon } from "@hugeicons/core-free-icons";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/client";
 
 /**
  * Looping product demo. Autoplays muted, except for users who prefer reduced
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button";
  * pause/play control, as required for auto-playing motion (WCAG 2.2.2).
  */
 export function HeroVideo() {
+  const { hero } = useI18n().dict;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
@@ -42,7 +44,7 @@ export function HeroVideo() {
           loop
           playsInline
           preload="metadata"
-          aria-label="Outpost product demo: an AI agent drawing an architecture diagram on the canvas"
+          aria-label={hero.videoLabel}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
         >
@@ -56,7 +58,7 @@ export function HeroVideo() {
         variant="secondary"
         size="icon-sm"
         onClick={toggle}
-        aria-label={playing ? "Pause demo video" : "Play demo video"}
+        aria-label={playing ? hero.pause : hero.play}
         className="absolute right-3 bottom-3 border border-white/15 bg-black/50 text-white opacity-70 backdrop-blur-sm hover:bg-black/70 hover:opacity-100 focus-visible:opacity-100 group-hover/video:opacity-100"
       >
         <HugeiconsIcon icon={playing ? PauseIcon : PlayIcon} aria-hidden />

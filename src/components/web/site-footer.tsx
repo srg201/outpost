@@ -3,38 +3,40 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "./logo";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-const LINK_GROUPS = [
-  {
-    title: "Product",
-    links: [
-      { label: "Features", href: "/#product" },
-      { label: "How it works", href: "/#how-it-works" },
-      { label: "Pricing", href: "/#pricing" },
-    ],
-  },
-  {
-    title: "Account",
-    links: [
-      { label: "Sign in", href: "/sign-in" },
-      { label: "Sign up", href: "/sign-up" },
-      { label: "Dashboard", href: "/dashboard" },
-    ],
-  },
-];
+export async function SiteFooter() {
+  const { footer, nav, common } = await getDictionary();
+  const linkGroups = [
+    {
+      title: footer.product,
+      links: [
+        { label: footer.features, href: "/#product" },
+        { label: nav.howItWorks, href: "/#how-it-works" },
+        { label: nav.pricing, href: "/#pricing" },
+      ],
+    },
+    {
+      title: footer.account,
+      links: [
+        { label: common.signIn, href: "/sign-in" },
+        { label: common.signUp, href: "/sign-up" },
+        { label: common.dashboard, href: "/dashboard" },
+      ],
+    },
+  ];
 
-export function SiteFooter() {
   return (
     <footer className="border-t border-border/60 px-6 py-12">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="max-w-xs">
             <Logo className="w-fit" />
-            <p className="mt-4 text-sm text-muted-foreground">Docs, canvas and an AI agent in one workspace.</p>
+            <p className="mt-4 text-sm text-muted-foreground">{footer.tagline}</p>
           </div>
 
-          <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:gap-16">
-            {LINK_GROUPS.map((group) => (
+          <nav aria-label={footer.label} className="grid grid-cols-2 gap-10 sm:gap-16">
+            {linkGroups.map((group) => (
               <div key={group.title}>
                 <h2 className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{group.title}</h2>
                 <ul className="mt-4 flex flex-col gap-2">
@@ -61,7 +63,7 @@ export function SiteFooter() {
         <div className="flex justify-between pt-6 font-mono text-xs text-muted-foreground">
           {/* Static year: `new Date()` isn't allowed in a prerendered page with Cache Components */}
           <p>© 2026 Outpost</p>
-          <p>Early Access</p>
+          <p>{footer.earlyAccess}</p>
         </div>
       </div>
     </footer>

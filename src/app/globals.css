@@ -8,7 +8,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  /* Outfit for Latin; Onest fills in Cyrillic (Outfit has none). The family names are spelled out
+     because next/font's variables end in an Arial-based fallback that would catch Cyrillic first. */
+  --font-sans: "Outfit", "Onest", "Outfit Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-heading);
   --color-sidebar-ring: var(--sidebar-ring);

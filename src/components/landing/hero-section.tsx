@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { StartBuildingButton } from "./start-building-button";
 import { Eyebrow } from "./section-heading";
 import { HeroVideo } from "./hero-video";
+import { getDictionary } from "@/i18n/get-dictionary";
 
-export function HeroSection() {
+export async function HeroSection() {
+  const { hero } = await getDictionary();
+
   return (
     <section
       aria-labelledby="hero-title"
@@ -14,24 +17,23 @@ export function HeroSection() {
       <div aria-hidden className="bg-topo absolute inset-0 -z-10 opacity-15 dark:opacity-20" />
 
       <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-        <Eyebrow className="fade-up mb-6">Early Access</Eyebrow>
+        <Eyebrow className="fade-up mb-6">{hero.eyebrow}</Eyebrow>
 
         <h1
           id="hero-title"
           className="fade-up font-heading text-4xl leading-[1.05] font-semibold tracking-tight text-balance [--fade-delay:100ms] sm:text-6xl md:text-7xl"
         >
-          An <span className="text-primary">Outpost</span> for wherever you&apos;re building
+          {hero.titleBefore} <span className="text-primary">Outpost</span> {hero.titleAfter}
         </h1>
 
         <p className="fade-up mt-6 max-w-xl text-base text-pretty text-muted-foreground [--fade-delay:200ms] sm:text-lg">
-          Plan in docs, sketch on the canvas, and let an AI agent turn your ideas into diagrams, all in one
-          workspace for you and your team.
+          {hero.description}
         </p>
 
         <div className="fade-up mt-10 flex w-full flex-col gap-3 [--fade-delay:300ms] sm:w-auto sm:flex-row">
           <StartBuildingButton />
           <Button size="lg" variant="outline" nativeButton={false} render={<Link href="#how-it-works" />}>
-            See How It Works
+            {hero.howItWorks}
           </Button>
         </div>
       </div>
