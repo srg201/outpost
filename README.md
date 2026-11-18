@@ -4,7 +4,11 @@
 infinite canvas, and ask the agent to draw the diagram or write the spec. Every change it makes arrives
 as a proposal you can accept or reject.
 
+**Live: https://outpost-gray.vercel.app**
+
 ![Outpost](public/social/og-image.png)
+
+![Workspace: doc, canvas with an ERD and the agent panel](docs/workspace.jpg)
 
 ## Features
 
