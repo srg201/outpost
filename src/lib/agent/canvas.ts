@@ -82,9 +82,10 @@ export function runCanvasTool(editor: Editor, ids: ShapeIdMap, name: CanvasToolN
   };
 }
 
-const FOCUS_INSET = 64;
-// Narrower than this, what's left beside the cover is too small to show anything, so use it all.
-const MIN_VISIBLE_WIDTH = 240;
+const FOCUS_INSET = 32;
+// Only when the cover leaves almost nothing (e.g. the full-width panel on a phone) is the whole
+// canvas used instead; a narrow strip still shows the shapes, scaled down to fit.
+const MIN_VISIBLE_WIDTH = 96;
 
 /**
  * Like editor.zoomToSelection, but fits the selection into the part of the canvas not hidden under
