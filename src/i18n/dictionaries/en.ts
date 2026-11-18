@@ -325,6 +325,14 @@ const en = {
     settings: "Team settings",
     switchFailed: "Couldn't switch team",
   },
+  errors: {
+    notFoundTitle: "Nothing out here",
+    notFoundDescription: "This page doesn't exist, or the link points to something that was removed.",
+    errorTitle: "Something went wrong",
+    errorDescription: "The page hit an unexpected error. Try again, or head back to the dashboard.",
+    retry: "Try again",
+    home: "Back to Outpost",
+  },
 };
 
 export type Dictionary = typeof en;

@@ -16,6 +16,7 @@ import { UpgradeDialogProvider } from "@/components/workspace/upgrade-dialog";
 import { I18nProvider } from "@/i18n/client";
 import { LOCALES } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/get-dictionary";
+import { SITE_URL } from "@/lib/site-url";
 
 // Outfit has no Cyrillic, so Russian text falls through to Onest, a close geometric match.
 // globals.css chains the two by family name (see --font-sans).
@@ -23,8 +24,6 @@ const fontSans = Outfit({ subsets: ["latin", "latin-ext"], variable: "--font-out
 const fontCyrillic = Onest({ subsets: ["cyrillic", "cyrillic-ext"], variable: "--font-onest" });
 const fontHeading = Raleway({ subsets: ["latin", "cyrillic"], variable: "--font-heading" });
 const fontMono = Geist_Mono({ subsets: ["latin", "cyrillic"], variable: "--font-geist-mono" });
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 // Cache Components needs every root param value up front.
 export function generateStaticParams() {
@@ -36,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { meta } = await getDictionary(locale);
 
   return {
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(SITE_URL),
     title: { default: meta.title, template: "%s · Outpost" },
     description: meta.description,
     applicationName: "Outpost",

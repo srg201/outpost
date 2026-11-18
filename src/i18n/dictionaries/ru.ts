@@ -326,6 +326,14 @@ const ru: Dictionary = {
     settings: "Настройки команды",
     switchFailed: "Не удалось сменить команду",
   },
+  errors: {
+    notFoundTitle: "Здесь ничего нет",
+    notFoundDescription: "Такой страницы нет, или ссылка ведёт на то, что уже удалили.",
+    errorTitle: "Что-то пошло не так",
+    errorDescription: "На странице произошла непредвиденная ошибка. Попробуйте ещё раз или вернитесь на главную.",
+    retry: "Попробовать снова",
+    home: "Вернуться в Outpost",
+  },
 };
 
 export default ru;
