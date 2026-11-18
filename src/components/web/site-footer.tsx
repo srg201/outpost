@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense, type ReactNode } from "react";
+import { Show } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -19,8 +21,8 @@ export async function SiteFooter() {
     {
       title: footer.account,
       links: [
-        { label: common.signIn, href: "/sign-in" },
-        { label: common.signUp, href: "/sign-up" },
+        { label: common.signIn, href: "/sign-in", signedOutOnly: true },
+        { label: common.signUp, href: "/sign-up", signedOutOnly: true },
         { label: common.dashboard, href: "/dashboard" },
       ],
     },
@@ -40,18 +42,29 @@ export async function SiteFooter() {
               <div key={group.title}>
                 <h2 className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{group.title}</h2>
                 <ul className="mt-4 flex flex-col gap-2">
-                  {group.links.map((link) => (
-                    <li key={link.href}>
-                      <Button
-                        variant="link"
-                        className="h-auto p-0 text-foreground hover:text-amber-500"
-                        nativeButton={false}
-                        render={<Link href={link.href} />}
-                      >
-                        {link.label}
-                      </Button>
-                    </li>
-                  ))}
+                  {group.links.map((link) => {
+                    const item: ReactNode = (
+                      <li key={link.href}>
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 text-foreground hover:text-amber-500"
+                          nativeButton={false}
+                          render={<Link href={link.href} />}
+                        >
+                          {link.label}
+                        </Button>
+                      </li>
+                    );
+                    // Signing in makes no sense once signed in; the footer is prerendered, so the
+                    // check runs in the browser (like the header's).
+                    return "signedOutOnly" in link ? (
+                      <Suspense key={link.href}>
+                        <Show when="signed-out">{item}</Show>
+                      </Suspense>
+                    ) : (
+                      item
+                    );
+                  })}
                 </ul>
               </div>
             ))}
