@@ -16,7 +16,13 @@ export const getWorkspace = cache(async (id: string) => {
 
   const workspace = await prisma.workspace.findUnique({
     where: { id },
-    select: { id: true, name: true, shareToken: true, ...workspaceOwnerSelect },
+    select: {
+      id: true,
+      name: true,
+      shareToken: true,
+      ...workspaceOwnerSelect,
+      doc: { select: { content: true, yjsState: true } },
+    },
   });
   if (!workspace) return null;
 

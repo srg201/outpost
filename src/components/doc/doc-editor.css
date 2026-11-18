@@ -1,0 +1,21 @@
+/* BlockNote ships its own palette. Map it onto the app's shadcn tokens, so the editor matches
+   the rest of the UI in both themes. [data-color-scheme] outranks BlockNote's own selectors. */
+.outpost-doc .bn-root[data-color-scheme] {
+  --bn-colors-editor-text: var(--foreground);
+  --bn-colors-editor-background: var(--background);
+  --bn-colors-menu-text: var(--popover-foreground);
+  --bn-colors-menu-background: var(--popover);
+  --bn-colors-tooltip-text: var(--popover-foreground);
+  --bn-colors-tooltip-background: var(--popover);
+  --bn-colors-hovered-text: var(--accent-foreground);
+  --bn-colors-hovered-background: var(--accent);
+  --bn-colors-selected-text: var(--accent-foreground);
+  --bn-colors-selected-background: var(--muted);
+  --bn-colors-disabled-text: var(--muted-foreground);
+  --bn-colors-disabled-background: var(--muted);
+  --bn-colors-border: var(--border);
+  --bn-colors-side-menu: var(--muted-foreground);
+  --bn-colors-shadow: oklch(0 0 0 / 20%);
+  --bn-border-radius: var(--radius);
+  --bn-font-family: inherit;
+}

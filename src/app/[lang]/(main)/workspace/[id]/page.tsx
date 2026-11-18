@@ -4,9 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { Note01Icon, PenTool03Icon } from "@hugeicons/core-free-icons";
+import type { Block } from "@blocknote/core";
+import { PenTool03Icon } from "@hugeicons/core-free-icons";
 
 import { CommandPalette } from "@/components/command-palette";
+import { DocEditor } from "@/components/doc/doc-editor-loader";
+import { WorkspaceEditorsProvider } from "@/components/workspace/editors-context";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlanButton from "@/components/web/plan-button";
@@ -43,8 +46,11 @@ async function Workspace({ params, searchParams }: Props) {
 
   const t = dict.workspacePage;
   const view = parseViewMode(viewParam);
+  const { doc } = workspace;
 
   return (
+    // Lets header tools (agent, share) reach the live editors inside the panels.
+    <WorkspaceEditorsProvider>
     <div className="flex h-dvh flex-col overflow-hidden">
       {/* Name on the left, view switcher in the middle, account and tools on the right.
           On phones the switcher drops to a second row so the name keeps its room. */}
@@ -82,11 +88,19 @@ async function Workspace({ params, searchParams }: Props) {
         <WorkspacePanels
           view={view}
           resizeLabel={t.resize}
-          doc={<PendingSurface icon={Note01Icon} title={t.docPanel} text={t.docPending} />}
+          doc={
+            <DocEditor
+              key={id}
+              workspaceId={id}
+              initialContent={doc?.content as Block[] | null}
+              initialState={doc?.yjsState ? Buffer.from(doc.yjsState).toString("base64") : null}
+            />
+          }
           canvas={<PendingSurface icon={PenTool03Icon} title={t.canvasPanel} text={t.canvasPending} />}
         />
       </main>
     </div>
+    </WorkspaceEditorsProvider>
   );
 }
 

@@ -172,7 +172,10 @@ const en = {
     docPanel: "Document",
     canvasPanel: "Canvas",
     resize: "Resize document and canvas",
-    docPending: "The collaborative document editor goes here.",
+    docLoading: "Loading document…",
+    saving: "Saving…",
+    saved: "Saved",
+    saveFailed: "Couldn't save. Retrying with your next edit.",
     canvasPending: "The canvas goes here.",
   },
   board: {
