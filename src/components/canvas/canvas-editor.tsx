@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import {
@@ -86,9 +86,14 @@ function SyncedCanvas({ workspaceId, initialSnapshot, identity }: CanvasEditorPr
     [userId, name, color, locale, themeAtom],
   );
 
+  // Called on every connection attempt, so each reconnect gets a fresh ticket. Must keep its
+  // identity: useSync tears down the store and reconnects whenever `uri` changes.
+  const uri = useCallback(
+    async () => `${SYNC_URL}/connect/${workspaceId}?ticket=${encodeURIComponent(await getCanvasTicket(workspaceId))}`,
+    [workspaceId],
+  );
   const store = useSync({
-    // Called on every connection attempt, so each reconnect gets a fresh ticket.
-    uri: async () => `${SYNC_URL}/connect/${workspaceId}?ticket=${encodeURIComponent(await getCanvasTicket(workspaceId))}`,
+    uri,
     assets: inlineBase64AssetStore,
     shapeUtils: allShapeUtils,
     bindingUtils: defaultBindingUtils,
