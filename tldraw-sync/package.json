@@ -1,0 +1,20 @@
+{
+  "name": "outpost-tldraw-sync",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tldraw/sync-core": "5.6.1",
+    "@tldraw/tlschema": "5.6.1",
+    "@tldraw/validate": "5.6.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261118.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.164.0"
+  }
+}

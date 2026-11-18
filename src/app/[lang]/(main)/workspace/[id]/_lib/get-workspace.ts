@@ -22,6 +22,7 @@ export const getWorkspace = cache(async (id: string) => {
       shareToken: true,
       ...workspaceOwnerSelect,
       doc: { select: { content: true, yjsState: true } },
+      canvas: { select: { content: true } },
     },
   });
   if (!workspace) return null;

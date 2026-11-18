@@ -1,0 +1,15 @@
+# Canvas sync server: one Durable Object per workspace canvas.
+# Deploys free to outpost-tldraw-sync.<subdomain>.workers.dev (no custom domain needed).
+# Secret (shared with the Next.js app): wrangler secret put CANVAS_SYNC_SECRET
+name = "outpost-tldraw-sync"
+main = "src/worker.ts"
+compatibility_date = "2025-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[durable_objects]
+bindings = [{ name = "TLDRAW_ROOM", class_name = "TldrawRoom" }]
+
+# SQLite-backed Durable Objects are included in the Workers free plan.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["TldrawRoom"]

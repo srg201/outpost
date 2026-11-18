@@ -176,7 +176,7 @@ const en = {
     saving: "Saving…",
     saved: "Saved",
     saveFailed: "Couldn't save. Retrying with your next edit.",
-    canvasPending: "The canvas goes here.",
+    canvasUnavailable: "Live canvas isn't set up on this server (NEXT_PUBLIC_TLDRAW_SYNC_URL and CANVAS_SYNC_SECRET).",
   },
   board: {
     title: "All workspaces",
@@ -188,6 +188,18 @@ const en = {
     deleteTitle: "Delete “{name}”?",
     deleteDescription: "This permanently deletes the workspace, including its doc and canvas. It can't be undone.",
     deleting: "Deleting…",
+  },
+  canvas: {
+    addTable: "Add table",
+    tableName: "Table name",
+    addRow: "Add row",
+    columnName: "column_name",
+    columnType: "type",
+    unnamedColumn: "unnamed column",
+    doneRow: "Done editing row",
+    removeRow: "Remove row",
+    togglePrimaryKey: "Toggle primary key",
+    toggleForeignKey: "Toggle foreign key",
   },
   palette: {
     title: "Command palette",

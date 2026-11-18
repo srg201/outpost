@@ -5,14 +5,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import type { Block } from "@blocknote/core";
+import type { TLEditorSnapshot } from "tldraw";
 import { PenTool03Icon } from "@hugeicons/core-free-icons";
 
+import { CanvasEditor } from "@/components/canvas/canvas-editor-loader";
 import { CommandPalette } from "@/components/command-palette";
 import { DocEditor } from "@/components/doc/doc-editor-loader";
 import { WorkspaceEditorsProvider } from "@/components/workspace/editors-context";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import PlanButton from "@/components/web/plan-button";
+import { isCanvasSyncConfigured } from "@/lib/canvas-ticket";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { EditableWorkspaceName } from "./_components/editable-workspace-name";
 import { PendingSurface } from "./_components/pending-surface";
@@ -46,7 +49,7 @@ async function Workspace({ params, searchParams }: Props) {
 
   const t = dict.workspacePage;
   const view = parseViewMode(viewParam);
-  const { doc } = workspace;
+  const { doc, canvas } = workspace;
 
   return (
     // Lets header tools (agent, share) reach the live editors inside the panels.
@@ -96,7 +99,17 @@ async function Workspace({ params, searchParams }: Props) {
               initialState={doc?.yjsState ? Buffer.from(doc.yjsState).toString("base64") : null}
             />
           }
-          canvas={<PendingSurface icon={PenTool03Icon} title={t.canvasPanel} text={t.canvasPending} />}
+          canvas={
+            isCanvasSyncConfigured() ? (
+              <CanvasEditor
+                key={id}
+                workspaceId={id}
+                initialSnapshot={canvas?.content as TLEditorSnapshot | null}
+              />
+            ) : (
+              <PendingSurface icon={PenTool03Icon} title={t.canvasPanel} text={t.canvasUnavailable} />
+            )
+          }
         />
       </main>
     </div>

@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The canvas sync Worker is its own package with its own tsconfig.
+    "tldraw-sync/**",
+    "src/generated/**",
   ]),
 ]);
 

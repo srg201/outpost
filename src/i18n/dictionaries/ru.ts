@@ -177,7 +177,7 @@ const ru: Dictionary = {
     saving: "Сохраняем…",
     saved: "Сохранено",
     saveFailed: "Не удалось сохранить. Повторим при следующей правке.",
-    canvasPending: "Здесь будет холст.",
+    canvasUnavailable: "Живой холст не настроен на этом сервере (NEXT_PUBLIC_TLDRAW_SYNC_URL и CANVAS_SYNC_SECRET).",
   },
   board: {
     title: "Все пространства",
@@ -189,6 +189,18 @@ const ru: Dictionary = {
     deleteTitle: "Удалить «{name}»?",
     deleteDescription: "Пространство будет удалено навсегда вместе с документом и холстом. Отменить это нельзя.",
     deleting: "Удаляем…",
+  },
+  canvas: {
+    addTable: "Добавить таблицу",
+    tableName: "Название таблицы",
+    addRow: "Добавить строку",
+    columnName: "column_name",
+    columnType: "тип",
+    unnamedColumn: "колонка без имени",
+    doneRow: "Готово",
+    removeRow: "Удалить строку",
+    togglePrimaryKey: "Первичный ключ",
+    toggleForeignKey: "Внешний ключ",
   },
   palette: {
     title: "Командная палитра",
