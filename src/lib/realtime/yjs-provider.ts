@@ -25,6 +25,7 @@ export class SupabaseYjsProvider {
   private channel: RealtimeChannel;
   private subscribed = false;
   private ready = false;
+  private destroyed = false;
   private readyTimeout?: ReturnType<typeof setTimeout>;
 
   /** `onReady` fires once: shortly after joining (peers get a moment to send unsaved edits),
@@ -39,29 +40,52 @@ export class SupabaseYjsProvider {
     this.channel = supabase.channel(topic, { config: { private: true, broadcast: { self: false } } });
 
     this.channel
-      .on("broadcast", { event: "update" }, ({ payload }) => {
-        Y.applyUpdate(this.doc, fromBase64(payload.update), this);
-      })
-      .on("broadcast", { event: "awareness" }, ({ payload }) => {
-        applyAwarenessUpdate(this.awareness, fromBase64(payload.update), this);
-      })
-      .on("broadcast", { event: "sync-request" }, () => this.sendFullState())
-      .subscribe((status, error) => {
-        if (status !== "SUBSCRIBED") {
-          if (error) console.warn(`[realtime] ${topic}: ${error.message}. Live collaboration is off.`);
-          this.subscribed = false;
-          this.markReady();
-          return;
-        }
-        this.subscribed = true;
-        // Share what we have, then ask peers for what we're missing.
-        this.sendFullState();
-        this.send("sync-request", {});
-        this.readyTimeout ??= setTimeout(this.markReady, PEER_SYNC_WAIT_MS);
-      });
+      .on("broadcast", { event: "update" }, ({ payload }) =>
+        this.applyRemote(() => Y.applyUpdate(this.doc, fromBase64(payload.update), this)),
+      )
+      .on("broadcast", { event: "awareness" }, ({ payload }) =>
+        this.applyRemote(() => applyAwarenessUpdate(this.awareness, fromBase64(payload.update), this)),
+      )
+      .on("broadcast", { event: "sync-request" }, () => this.sendFullState());
+    void this.join(topic);
 
     this.doc.on("update", this.handleDocUpdate);
     this.awareness.on("update", this.handleAwarenessUpdate);
+  }
+
+  // The join request carries whatever token the client holds when subscribe() runs. The Clerk
+  // token arrives asynchronously, so without waiting for it the join can go out anonymous and
+  // the private channel answers "Unauthorized".
+  private async join(topic: string) {
+    try {
+      await this.supabase.realtime.setAuth();
+    } catch (error) {
+      console.warn(`[realtime] ${topic}: couldn't get a session token`, error);
+    }
+    if (this.destroyed) return;
+
+    this.channel.subscribe((status, error) => {
+      if (status !== "SUBSCRIBED") {
+        if (error) console.warn(`[realtime] ${topic}: ${error.message}. Live collaboration is off.`);
+        this.subscribed = false;
+        this.markReady();
+        return;
+      }
+      this.subscribed = true;
+      // Share what we have, then ask peers for what we're missing.
+      this.sendFullState();
+      this.send("sync-request", {});
+      this.readyTimeout ??= setTimeout(this.markReady, PEER_SYNC_WAIT_MS);
+    });
+  }
+
+  // One malformed or out-of-step message from a peer must not take the editor down.
+  private applyRemote(apply: () => void) {
+    try {
+      apply();
+    } catch (error) {
+      console.warn("[realtime] skipped a remote update", error);
+    }
   }
 
   // Remote updates are applied with `this` as the origin, so they aren't echoed back out.
@@ -96,6 +120,7 @@ export class SupabaseYjsProvider {
   }
 
   destroy() {
+    this.destroyed = true;
     clearTimeout(this.readyTimeout);
     this.ready = true;
     // Tell peers our cursor is gone before leaving.
